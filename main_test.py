@@ -37,12 +37,3 @@ def test_get_file_path_fail(mocker):
     result = main.get_file_path()
     # Assert
     assert result == "File path is not provided, please provide file path"
-
-
-def test_send_message_to_chat():
-    # Arrange
-    message = "test name"
-    # Act
-    result = main.send_message_to_chat(message=message)
-    # Assert
-    assert result == f"Hello {message}"

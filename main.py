@@ -1,10 +1,12 @@
 import sys
 
+# from send_message import send_message_to_Telegram
+
 
 def main():
     file_path = get_file_path()
     message = read_from_file(file_path)
-    print(send_message_to_chat(message=message))
+    # send_message_to_Telegram(message_to_send=message)
 
 
 def get_file_path() -> str:
@@ -19,10 +21,6 @@ def read_from_file(path: str) -> str:
             return f.read()
     except FileNotFoundError as e:
         return f"Error occured: {e}"
-
-
-def send_message_to_chat(message: str):
-    return f"Hello {message}"
 
 
 if __name__ == "__main__":
