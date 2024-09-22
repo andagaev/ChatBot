@@ -1,12 +1,12 @@
 import sys
 
-# from send_message import send_message_to_Telegram
+import send_message
 
 
 def main():
     file_path = get_file_path()
     message = read_from_file(file_path)
-    # send_message_to_Telegram(message_to_send=message)
+    send_message.send_message_to_Telegram(message_to_send=message)
 
 
 def get_file_path() -> str:
