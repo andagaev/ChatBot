@@ -4,16 +4,14 @@ import os
 
 import telethon
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-api_id = "your api id"  # To get your api id and hash visit https://my.telegram.org/apps
-api_hash = "your api hash"
-username = "user's username"
-
+api_id = os.environ["API_ID"]
+api_hash = os.environ["API_HASH"]
+tg_username = os.environ["TG_USERNAME"]
+bot_token = os.environ["TOKEN"]
 
 client = None
 
@@ -26,8 +24,8 @@ def init_client():
 
 async def send_message_to_bot(text: str):
     init_client()
-    await client.start(bot_token=TOKEN)
-    await client.send_message(username, message=text)
+    await client.start(bot_token=bot_token)
+    await client.send_message(tg_username, message=text)
 
 
 async def run_client(message: str):

@@ -1,12 +1,12 @@
 import sys
 
-import send_message
+from src import tg
 
 
 def main():
     file_path = get_file_path()
     message = read_from_file(file_path)
-    send_message.send_message_to_Telegram(message_to_send=message)
+    tg.send_message_to_Telegram(message_to_send=message)
 
 
 def get_file_path() -> str:
