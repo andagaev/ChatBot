@@ -4,6 +4,8 @@ import os
 
 import telethon
 
+from src.db import database as db
+
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
@@ -25,7 +27,11 @@ def init_client():
 async def send_message_to_bot(text: str):
     init_client()
     await client.start(bot_token=bot_token)
-    await client.send_message(tg_username, message=text)
+
+    users = db.get_tg_users()
+
+    for user in users:
+        await client.send_message(entity=user.username, message=text)
 
 
 async def run_client(message: str):
