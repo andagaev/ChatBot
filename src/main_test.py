@@ -1,12 +1,4 @@
-import pytest
-
 from src import main
-
-
-@pytest.fixture(autouse=True)
-def mock_telegram_client(mocker):
-    # Mock the TelegramClient to avoid initializing it during the tests
-    mocker.patch("src.tg.telethon.TelegramClient")
 
 
 def test_read_from_file_success(mocker):

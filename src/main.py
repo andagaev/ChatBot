@@ -1,6 +1,6 @@
 import os
 
-from src import tg
+from src import discrd, tg
 
 file_path = os.environ["FILE_PATH"]
 
@@ -8,6 +8,7 @@ file_path = os.environ["FILE_PATH"]
 def main():
     message = read_from_file(file_path)
     tg.send_message_to_Telegram(message_to_send=message)
+    discrd.send_message_to_Discord(message)
 
 
 def read_from_file(path: str) -> str:

@@ -1,5 +1,4 @@
 import os
-import uuid
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -19,34 +18,37 @@ class Base(orm.DeclarativeBase):
 class TGUser(Base):
     __tablename__ = "tg_users"
 
-    id: orm.Mapped[str] = orm.mapped_column(
-        sa.String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: orm.Mapped[str] = orm.mapped_column(sa.String, primary_key=True)
     username: orm.Mapped[str] = orm.mapped_column(sa.String(30))
 
 
 class DiscordUser(Base):
     __tablename__ = "discord_users"
 
-    id: orm.Mapped[str] = orm.mapped_column(
-        sa.String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
-    username: orm.Mapped[str] = orm.mapped_column(sa.String(30))
+    id: orm.Mapped[str] = orm.mapped_column(sa.String(36), primary_key=True)
+    username: orm.Mapped[str] = orm.mapped_column(sa.String(36))
 
 
-def create_tg_user(username: str) -> bool:
+class DiscordChannel(Base):
+    __tablename__ = "discord_channels"
+
+    id: orm.Mapped[str] = orm.mapped_column(sa.String(36), primary_key=True)
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(36))
+
+
+def create_tg_user(user_id: str, username: str) -> bool:
     engine = create_engine()
 
     Base.metadata.create_all(engine)
 
     with orm.Session(engine, expire_on_commit=False) as session:
 
-        existing_user = session.query(TGUser).filter_by(username=username).first()
+        existing_user = session.query(TGUser).filter_by(id=user_id).first()
 
         if existing_user:
             return False
 
-        new_user = TGUser(username=username)
+        new_user = TGUser(username=username, id=user_id)
 
         session.add(new_user)
         session.commit()
@@ -55,23 +57,46 @@ def create_tg_user(username: str) -> bool:
         return True
 
 
-def create_discord_user(username: str) -> bool:
+def create_discord_user(user_id: str, username: str) -> bool:
     engine = create_engine()
 
     Base.metadata.create_all(engine)
 
     with orm.Session(engine, expire_on_commit=False) as session:
 
-        existing_user = session.query(DiscordUser).filter_by(username=username).first()
+        existing_user = session.query(DiscordUser).filter_by(id=user_id).first()
 
         if existing_user:
             return False
 
-        new_user = DiscordUser(username=username)
+        new_user = DiscordUser(id=user_id, username=username)
 
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
+
+        return True
+
+
+def create_discord_channel(channel_id: int, channel_name: str) -> bool:
+    engine = create_engine()
+
+    Base.metadata.create_all(engine)
+
+    with orm.Session(engine, expire_on_commit=False) as session:
+
+        existing_channel = (
+            session.query(DiscordChannel).filter_by(id=channel_id).first()
+        )
+
+        if existing_channel:
+            return False
+
+        new_channel = DiscordChannel(id=channel_id, name=channel_name)
+
+        session.add(new_channel)
+        session.commit()
+        session.refresh(new_channel)
 
         return True
 
@@ -92,3 +117,12 @@ def get_discord_users():
         users = session.query(DiscordUser).all()
 
     return users
+
+
+def get_discord_channels():
+    engine = create_engine()
+
+    with orm.Session(engine, expire_on_commit=False) as session:
+        channels = session.query(DiscordChannel).all()
+
+    return channels

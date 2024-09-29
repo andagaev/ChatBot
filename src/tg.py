@@ -1,8 +1,7 @@
-import asyncio
 import logging
 import os
 
-import telethon
+import requests
 
 from src.db import database as db
 
@@ -10,35 +9,23 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-api_id = os.environ["API_ID"]
-api_hash = os.environ["API_HASH"]
-tg_username = os.environ["TG_USERNAME"]
-bot_token = os.environ["TOKEN"]
+logger = logging.getLogger(__name__)
 
-client = None
+bot_token = os.environ["TG_TOKEN"]
 
 
-def init_client():
-    global client
-    if client is None:
-        client = telethon.TelegramClient("session_name", api_id, api_hash)
-
-
-async def send_message_to_bot(text: str):
-    init_client()
-    await client.start(bot_token=bot_token)
-
+def send_message_to_Telegram(message_to_send: str):
     users = db.get_tg_users()
 
     for user in users:
-        await client.send_message(entity=user.username, message=text)
-
-
-async def run_client(message: str):
-    init_client()
-    async with client:
-        await send_message_to_bot(text=message)
-
-
-def send_message_to_Telegram(message_to_send):
-    asyncio.run(run_client(message=message_to_send))
+        res = requests.post(
+            url=f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            json={
+                "chat_id": int(user.id),
+                "text": message_to_send,
+            },
+        )
+        if res.status_code != 200:
+            logger.error(f"Failed to send message to {user.username}")
+        else:
+            logger.info(f"Message sent to {user.username}")
