@@ -1,1 +1,5 @@
-test name
+telegram first message to Telegram
+discord dis first message to Discord
+telegram second message to Telegram
+all message to all channels
+no channel message 
